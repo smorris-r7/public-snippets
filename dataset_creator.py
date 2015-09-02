@@ -7,14 +7,20 @@ import sys
 import json
 from pprint import pprint
 
-def create_cities_file(city_list_parameter, filename):
+def create_cities_file(city_dict, filename):
     """
     returns a success code for printing a city json file 
     """
 
     fixture_list = []
     pk = 1
-    for city_name, city_name_urlized in city_list_parameter:
+    if sys.flags.debug:
+        print("Creating city file {0} for city dict {1}".format(filename, city_dict))
+    sys.exit()
+    for city_name_urlized in city_dict:
+        city_name = city_dict[city_name_urlized]
+    #for city_name in city_list_parameter:
+    #    city_name_urlized = city_list_parameter[city_name]
         fields = {  "city_urlized" : "",
                     "city_name" : "",
                     "city_state" : "",
@@ -382,25 +388,29 @@ def read_json(filename):
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="json config file", required=True)
-    parser.add_argument("--cityfile", help="output file for city data objects")
+    parser.add_argument("--auth", help="json config file, specifically containing developer keys", required=True)
+    parser.add_argument("--settings", help="json settings file", required=True)
+
+    parser.add_argument("--skipcity", help="skip city file creation and instead read from city_file", action="store_true")
+    parser.add_argument("--skipshelter", help="skip city file creation and instead read from shelter_file", action="store_true")
+    parser.add_argument("--skippet", help="skip city file creation and instead read from pet_file", action="store_true")
+
     args = parser.parse_args()
 
-    # parse config file to get keys
-    config_dict     = read_json(args.config)
-    consumer_key    = config_dict["yelp"]["consumer_key"]
-    consumer_secret = config_dict["yelp"]["consumer_secret"]
-    token           = config_dict["yelp"]["token"]
-    token_secret    = config_dict["yelp"]["token_secret"]
-    city_list       = config_dict["city_list"]
-
-    #create_cities_file(config_dict["city_list"], args.cityfile)
-
-    #city_list = [("austin tx", "austin")] #, "san antonio tx", "houston+tx", "san+francisco+ca", "dallas+tx", "el+paso+tx", "new+orleans+la"]
-
-    city_list = [("Austin TX", "austin"), ("San Antonio TX", "san_antonio"), ("Houston TX", "houston"), ("San Francisco CA", "san_francisco"), ("New Orleans LA", "new_orleans")]
+    auth_dict       = read_json(args.auth)
+    consumer_key    = auth_dict["yelp"]["consumer_key"]
+    consumer_secret = auth_dict["yelp"]["consumer_secret"]
+    token           = auth_dict["yelp"]["token"]
+    token_secret    = auth_dict["yelp"]["token_secret"]
     
-    create_cities_file(city_list, args.cityfile)
+    settings_dict   = read_json(args.settings)
+
+    if not args.skipcity:
+        create_cities_file(settings_dict["city_dict"], settings_dict["city_file"])
+    if not args.skipshelter:
+        create_shelters_file(settings_dict["city_dict"], settings_dict["shelter_count"])
+    if not args.skippet:
+        create_pets_file(settings_dict["pet_count"])
 
     #print(yelp_query("austin tx", "vetrinarian", "image_url"))
     #print(google_query("Austin pets alive"))
