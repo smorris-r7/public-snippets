@@ -8,19 +8,16 @@ import json
 from pprint import pprint
 
 def create_cities_file(city_dict, filename):
-    """
-    returns a success code for printing a city json file 
+    """Queries various sources for city information and stores it in a file.
     """
 
     fixture_list = []
     pk = 1
     if sys.flags.debug:
         print("Creating city file {0} for city dict {1}".format(filename, city_dict))
-    sys.exit()
+
     for city_name_urlized in city_dict:
         city_name = city_dict[city_name_urlized]
-    #for city_name in city_list_parameter:
-    #    city_name_urlized = city_list_parameter[city_name]
         fields = {  "city_urlized" : "",
                     "city_name" : "",
                     "city_state" : "",
