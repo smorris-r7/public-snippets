@@ -1,0 +1,7 @@
+{"city_file": "cities.json",
+ "shelter_file": "shelters.json",
+ "pets_file": "pets.json",
+ "city_dict": {"austin_tx": "Austin TX", "san_antonio_tx": "San Antonio TX", "houston_tx": "Houston TX", "san_francisco_ca": "San Francisco CA", "new_orleans_la": "New Orleans LA"},
+ "shelter_count": 10,
+ "pet_count": 10
+}
