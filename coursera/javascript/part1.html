@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+  <title>JavaScript Guessing Game</title>
+  <meta name="author" content="Sam Morris" charset="UTF-8">
+</head>
+
+<body onload=do_game()>
+  <script>
+    function do_game()
+    {
+      var guess_input_text;
+      var colors = ["red", "orange", "yellow", "green", "blue", "violet", "white", "black"];
+      var display_colors = [];
+      var random_number_integer = Math.floor(Math.random() * colors.length);
+      var target = colors[random_number_integer];
+      var finished = false;
+      var guesses = 0;
+
+      console.log("target is " + target);
+
+      colors.forEach(
+        function(value)
+         {
+           display_colors.push(" " + value);
+         }
+      );
+      display_colors = display_colors.sort();
+      display_colors[0] = display_colors[0].substr(1)
+
+      while (!finished)
+      {
+        guess_input_text = prompt("I am thinking of one of these colors: \n\n" + display_colors + "\n\nWhat color am I thinking of?");
+        guesses += 1;
+        finished = target.toUpperCase() == guess_input_text.toUpperCase();
+      }
+    }
+  </script>
+</body>
