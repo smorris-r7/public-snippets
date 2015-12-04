@@ -55,16 +55,8 @@ def create_cities_file(city_dict, filename, auth_dict):
     
 def create_shelters_file(city_dict, filename, shelter_count, auth_dict):
     """
-    given a city, find <25 shelters associated with it and only include them if their city field matches
-    return the list of shelter objects
-    costs one request per city in city_list
+    Iterating over a city dict, find information on several shelters in each city. Print to file.
     """
-    # query petfinder using shelters.find
-    # parse the json as a list of shelter objects
-    # later, do filtering
-    # return it
-    # http://api.petfinder.com/shelter.find?key=2933122e170793b4d4b60358e67ecb65&location=78723&format=json
-
     fixture_superlist = []
     pk = 1
 
@@ -340,6 +332,10 @@ def google_query(term):
 def petfinder_query(identifier, attribute):
     """
     Make a query to the petfinder API.
+    To run a manual/test query against the petfinder API in a browser, try a URL something like this:
+      http://api.petfinder.com/shelter.find?key=2933122e170793b4d4b60358e67ecb65&location=78723&format=json
+    Full petfinder API docs here:
+      https://www.petfinder.com/developers/api-docs
     """
     petfinder_url = "http://api.petfinder.com/pet.get"
     payload = {"key" : "2933122e170793b4d4b60358e67ecb65", "id" : identifier, "format" : "json"}
