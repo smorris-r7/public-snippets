@@ -8,7 +8,7 @@ import json
 from pprint import pprint
 
 def create_cities_file(city_dict, filename):
-    """Queries various sources for city information and stores it in a file.
+    """Queries various web APIs for city information and stores it in a file.
     """
 
     fixture_list = []
@@ -19,73 +19,28 @@ def create_cities_file(city_dict, filename):
     for city_name_urlized in city_dict:
         city_name = city_dict[city_name_urlized]
         if sys.flags.debug:
-            print("Processing '{}'...".format(city_name_urlized))
-        fields = {  "city_urlized" : "",
-                    "city_name" : "",
-                    "city_state" : "",
-                    "city_country" : "",
-                    "city_vet_url" : "",
-                    "city_groomer_url" : "",
-                    "city_park_url" : "",
-                    "city_pic" : "",
-                    "city_park_pic" : "",
-                    "city_vet_pic" : "",
-                    "city_groomer_pic" : "",
-                    "city_url" : "",
-                    "city_blurb" : ""
-                 }
-        try:
-            fields["city_urlized"] = city_name_urlized
-        except:
-            print("   city_urlized was not found")
-        try:
-            fields["city_name"] = city_name
-        except:
-            print("   city_name was not found")   
-        try:
-            fields["city_state"] = city_name
-        except:
-            print("   city_name was not found")                       
-        try:
-            fields["city_country"] = "US"
-        except:
-            print("   city_country was not found")
-        try:
-            fields["city_vet_url"] = yelp_query(city_name, "veterinarian", "url")
-        except:
-            print("   city_vet_url was not found")
-        try:
-            fields["city_groomer_url"] = yelp_query(city_name, "pet+groomer", "url")
-        except:
-            print("   city_groomer_url was not found")
-        try:
-            fields["city_park_url"] = yelp_query(city_name, "dog+park", "url")
-        except:
-            print("   city_park_url was not found")
-        try:
-            fields["city_pic"] = yelp_query(city_name, "city", "image_url")
-        except:
-            print("   city_pic was not found")
-        try:
-            fields["city_vet_pic"] = yelp_query(city_name, "veterinarian", "image_url")
-        except:
-            print("   city_vet_pic was not found")
-        try:
-            fields["city_groomer_pic"] = yelp_query(city_name, "pet+groomer", "image_url")
-        except:
-            print("   city_groomer_pic was not found")
-        try:
-            fields["city_park_pic"] = yelp_query(city_name, "dog+park", "image_url")
-        except:
-            print("   city_park_pic was not found")
-        try:
-            fields["city_url"] = city_name_urlized
-        except:
-            print("   city_url was not found in query")
-        try:
-            fields["city_blurb"] = yelp_query(city_name, "city", "snippet_text")
-        except:
-            print("   city_blurb was not found in query")
+            print(" Processing '{}'...".format(city_name_urlized))
+        query_dict = {  "city_urlized" : city_name_urlized,
+                        "city_name" : city_name,
+                        "city_state" : "BOGUS",
+                        "city_country" : "US",
+                        "city_vet_url" : yelp_query(city_name, "veterinarian", "url"),
+                        "city_groomer_url" : yelp_query(city_name, "pet+groomer", "url"),
+                        "city_park_url" : yelp_query(city_name, "dog+park", "url"),
+                        "city_pic" : yelp_query(city_name, "city", "image_url"),
+                        "city_park_pic" : yelp_query(city_name, "dog+park", "image_url"),
+                        "city_vet_pic" : yelp_query(city_name, "veterinarian", "image_url"),
+                        "city_groomer_pic" : yelp_query(city_name, "pet+groomer", "image_url"),
+                        "city_url" : city_name_urlized,
+                        "city_blurb" : yelp_query(city_name, "city", "snippet_text")
+                     }
+        fields = {}
+        for query in query_dict:
+            try:
+                fields[query] = query_dict[query]
+            except:
+                print("NONFATAL ERROR. Failed attempting to populate fields[{}] with '{}'...".format(query, query_dict[query]))
+        sys.exit("testing...")
         fixture_element = {"model" : "nsaid.City", "pk" : pk, "fields" : fields}
         fixture_list.append(fixture_element)
         pk += 1
@@ -146,7 +101,6 @@ def create_shelters_file(city_dict, filename, shelter_count):
 
     if sys.flags.debug:
         print("Creating shelters file '{}'...".format(filename))
-    sys.exit("testing")
     for city_urlized in city_dict:
         city = city_dict[city_urlized]
         if sys.flags.debug:
