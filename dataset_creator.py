@@ -8,9 +8,9 @@ import json
 from pprint import pprint
 
 def create_cities_file(city_dict, filename, auth_dict):
-    """Queries various web APIs for city information and stores it in a file.
     """
-
+    Queries various web APIs for city information and stores it in a file.
+    """
     fixture_list = []
     pk = 1
     if sys.flags.debug:
@@ -53,9 +53,9 @@ def create_cities_file(city_dict, filename, auth_dict):
         print("City file created.")
     
 def yelp_query(city, term, field_name, auth_dict):
-    """Make a query to the yelp API.
     """
-
+    Make a query to the yelp API.
+    """
     consumer_key    = auth_dict["yelp"]["consumer_key"]
     consumer_secret = auth_dict["yelp"]["consumer_secret"]
     token           = auth_dict["yelp"]["token"]
@@ -71,18 +71,22 @@ def yelp_query(city, term, field_name, auth_dict):
     result = str(d["businesses"][0][field_name])
     if sys.flags.debug:
         #print(json.dumps(d, indent = 4))
-        print("yelp " + field_name + " " + result)
+        print("yelp_query: " + field_name + " " + result)
     #session.close()
     return result
 
 def google_query(term):
+    """
+    Make a query to the google web search ajax API.
+    """
     url = 'http://ajax.googleapis.com/ajax/services/search/web'
     payload = {"v" : 1.0, "q" : term}
     r = requests.get(url, params = payload)
-    #print(json.dumps(r.json(), indent = 4))
-    #print("google " + r.json()["responseData"]["results"][0]["visibleUrl"])
     result = str(r.json()["responseData"]["results"][0]["visibleUrl"])
-    #print("google " + term + " " + result)
+    if sys.flags.debug:
+        #print(json.dumps(r.json(), indent = 4))
+        #print("google " + r.json()["responseData"]["results"][0]["visibleUrl"])
+        print("google_query: " + term + " " + result)
     return result 
 
 def create_shelters_file(city_dict, filename, shelter_count, auth_dict):
@@ -333,6 +337,9 @@ def create_pets_file(pet_count):
     #return fixture_superlist
 
 def petfinder_query(identifier, attribute):
+    """
+    Make a query to the petfinder API.
+    """
     petfinder_url = "http://api.petfinder.com/pet.get"
     payload = {"key" : "2933122e170793b4d4b60358e67ecb65", "id" : identifier, "format" : "json"}
     r = requests.get(petfinder_url, params = payload)
@@ -341,6 +348,9 @@ def petfinder_query(identifier, attribute):
     return sanitized_result
 
 def read_json(filename):
+    """
+    Open a json file, parse it, and return it as a dict object.
+    """
     with open(filename) as f:
         data = json.loads(f.read())
     if sys.flags.debug:
