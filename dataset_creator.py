@@ -125,7 +125,7 @@ def google_query(term):
     #print("google " + term + " " + result)
     return result 
 
-def create_shelters_file(city_list, shelter_count):
+def create_shelters_file(city_dict, shelter_count):
     """
     given a city, find <25 shelters associated with it and only include them if their city field matches
     return the list of shelter objects
@@ -140,7 +140,12 @@ def create_shelters_file(city_list, shelter_count):
     fixture_superlist = []
     pk = 1
 
-    for city, city_urlized in city_list:
+    if sys.flags.debug:
+        print('Creating shelters file...')
+    for city_urlized in city_dict:
+        city = city_dict[city_urlized]
+        if sys.flags.debug:
+            print('Processing {city} {city_urlized}')
         petfinder_url = "http://api.petfinder.com/shelter.find"
         payload = {"key" : "2933122e170793b4d4b60358e67ecb65", "location" : city, "count" : shelter_count, "format" : "json"}
         r = requests.get(petfinder_url, params=payload)
