@@ -53,26 +53,26 @@ def create_cities_file(city_dict, filename, auth_dict):
         print("City file created.")
     
 def yelp_query(city, term, field_name, auth_dict):
+    """Make a query to the yelp API.
+    """
 
-    # setup for yelp requests
-    yelp_params = {}
     consumer_key    = auth_dict["yelp"]["consumer_key"]
     consumer_secret = auth_dict["yelp"]["consumer_secret"]
     token           = auth_dict["yelp"]["token"]
     token_secret    = auth_dict["yelp"]["token_secret"]
-
     session = rauth.OAuth1Session(consumer_key = consumer_key, consumer_secret = consumer_secret, access_token = token, access_token_secret = token_secret)
-
+    yelp_params = {}
     yelp_params["location"] = city 
     yelp_params["term"] = term
     yelp_params["limit"] = 1
+
     yelp_response = session.get("http://api.yelp.com/v2/search", params = yelp_params)
     d = yelp_response.json()
-    #print(json.dumps(d, indent = 4))
     result = str(d["businesses"][0][field_name])
-    #print("yelp " + field_name + " " + result)
+    if sys.flags.debug:
+        #print(json.dumps(d, indent = 4))
+        print("yelp " + field_name + " " + result)
     #session.close()
-    #print("yelp " + field_name + " " + result)
     return result
 
 def google_query(term):
