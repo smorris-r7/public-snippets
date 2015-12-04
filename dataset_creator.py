@@ -47,7 +47,6 @@ def create_cities_file(city_dict, filename, auth_dict):
         fixture_list.append(fixture_element)
         pk += 1
 
-    #    fixture_superlist += fixture_list
     city_file = open(filename, "w")
     json.dump(fixture_list, city_file, indent = 4)
     city_file.close()
