@@ -14,10 +14,12 @@ def create_cities_file(city_dict, filename):
     fixture_list = []
     pk = 1
     if sys.flags.debug:
-        print("Creating city file {0} for city dict {1}".format(filename, city_dict))
+        print("Creating city file '{}'...".format(filename))
 
     for city_name_urlized in city_dict:
         city_name = city_dict[city_name_urlized]
+        if sys.flags.debug:
+            print("Processing '{}'...".format(city_name_urlized))
         fields = {  "city_urlized" : "",
                     "city_name" : "",
                     "city_state" : "",
@@ -91,6 +93,8 @@ def create_cities_file(city_dict, filename):
     city_file = open(filename, "w")
     json.dump(fixture_list, city_file, indent = 4)
     city_file.close()
+    if sys.flags.debug:
+        print("City file created.")
     
 def yelp_query(city, term, field_name):
 
@@ -125,7 +129,7 @@ def google_query(term):
     #print("google " + term + " " + result)
     return result 
 
-def create_shelters_file(city_dict, shelter_count):
+def create_shelters_file(city_dict, filename, shelter_count):
     """
     given a city, find <25 shelters associated with it and only include them if their city field matches
     return the list of shelter objects
@@ -141,11 +145,12 @@ def create_shelters_file(city_dict, shelter_count):
     pk = 1
 
     if sys.flags.debug:
-        print('Creating shelters file...')
+        print("Creating shelters file '{}'...".format(filename))
+    sys.exit("testing")
     for city_urlized in city_dict:
         city = city_dict[city_urlized]
         if sys.flags.debug:
-            print('Processing {city} {city_urlized}')
+            print("Processing '{}'...".format(city_urlized))
         petfinder_url = "http://api.petfinder.com/shelter.find"
         payload = {"key" : "2933122e170793b4d4b60358e67ecb65", "location" : city, "count" : shelter_count, "format" : "json"}
         r = requests.get(petfinder_url, params=payload)
@@ -233,6 +238,8 @@ def create_shelters_file(city_dict, shelter_count):
     shelter_file = open("../../nsaid/fixtures/shelters_fixture_2.json", "w")
     json.dump(fixture_superlist, shelter_file, indent = 4)
     shelter_file.close()
+    if sys.flags.debug:
+        print("Shelter file created.")
 
 
 
@@ -410,7 +417,7 @@ if __name__ == "__main__":
     if not args.skipcity:
         create_cities_file(settings_dict["city_dict"], settings_dict["city_file"])
     if not args.skipshelter:
-        create_shelters_file(settings_dict["city_dict"], settings_dict["shelter_count"])
+        create_shelters_file(settings_dict["city_dict"], settings_dict["shelter_file"], settings_dict["shelter_count"])
     if not args.skippet:
         create_pets_file(settings_dict["pet_count"])
 
