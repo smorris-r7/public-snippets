@@ -39,11 +39,12 @@ def create_cities_file(city_dict, filename):
             try:
                 fields[query] = query_dict[query]
             except:
-                print("NONFATAL ERROR. Failed attempting to populate fields[{}] with '{}'...".format(query, query_dict[query]))
-        sys.exit("testing...")
+                # as of this implementation, we don't mind having empty values
+                print("Nonfatal error attempting to populate fields[{}] with '{}'...".format(query, query_dict[query]))
         fixture_element = {"model" : "nsaid.City", "pk" : pk, "fields" : fields}
         fixture_list.append(fixture_element)
         pk += 1
+
     #    fixture_superlist += fixture_list
     city_file = open(filename, "w")
     json.dump(fixture_list, city_file, indent = 4)
