@@ -52,43 +52,6 @@ def create_cities_file(city_dict, filename, auth_dict):
     if sys.flags.debug:
         print("City file created.")
     
-def yelp_query(city, term, field_name, auth_dict):
-    """
-    Make a query to the yelp API.
-    """
-    consumer_key    = auth_dict["yelp"]["consumer_key"]
-    consumer_secret = auth_dict["yelp"]["consumer_secret"]
-    token           = auth_dict["yelp"]["token"]
-    token_secret    = auth_dict["yelp"]["token_secret"]
-    session = rauth.OAuth1Session(consumer_key = consumer_key, consumer_secret = consumer_secret, access_token = token, access_token_secret = token_secret)
-    yelp_params = {}
-    yelp_params["location"] = city 
-    yelp_params["term"] = term
-    yelp_params["limit"] = 1
-
-    yelp_response = session.get("http://api.yelp.com/v2/search", params = yelp_params)
-    d = yelp_response.json()
-    result = str(d["businesses"][0][field_name])
-    if sys.flags.debug:
-        #print(json.dumps(d, indent = 4))
-        print("yelp_query: " + field_name + " " + result)
-    #session.close()
-    return result
-
-def google_query(term):
-    """
-    Make a query to the google web search ajax API.
-    """
-    url = 'http://ajax.googleapis.com/ajax/services/search/web'
-    payload = {"v" : 1.0, "q" : term}
-    r = requests.get(url, params = payload)
-    result = str(r.json()["responseData"]["results"][0]["visibleUrl"])
-    if sys.flags.debug:
-        #print(json.dumps(r.json(), indent = 4))
-        #print("google " + r.json()["responseData"]["results"][0]["visibleUrl"])
-        print("google_query: " + term + " " + result)
-    return result 
-
 def create_shelters_file(city_dict, filename, shelter_count, auth_dict):
     """
     given a city, find <25 shelters associated with it and only include them if their city field matches
@@ -336,6 +299,43 @@ def create_pets_file(pet_count):
     #rint(json.dumps(fixture_superlist, indent = 4))
     #return fixture_superlist
 
+def yelp_query(city, term, field_name, auth_dict):
+    """
+    Make a query to the yelp API.
+    """
+    consumer_key    = auth_dict["yelp"]["consumer_key"]
+    consumer_secret = auth_dict["yelp"]["consumer_secret"]
+    token           = auth_dict["yelp"]["token"]
+    token_secret    = auth_dict["yelp"]["token_secret"]
+    session = rauth.OAuth1Session(consumer_key = consumer_key, consumer_secret = consumer_secret, access_token = token, access_token_secret = token_secret)
+    yelp_params = {}
+    yelp_params["location"] = city 
+    yelp_params["term"] = term
+    yelp_params["limit"] = 1
+
+    yelp_response = session.get("http://api.yelp.com/v2/search", params = yelp_params)
+    d = yelp_response.json()
+    result = str(d["businesses"][0][field_name])
+    if sys.flags.debug:
+        #print(json.dumps(d, indent = 4))
+        print("yelp_query: " + field_name + " " + result)
+    #session.close()
+    return result
+
+def google_query(term):
+    """
+    Make a query to the google web search ajax API.
+    """
+    url = 'http://ajax.googleapis.com/ajax/services/search/web'
+    payload = {"v" : 1.0, "q" : term}
+    r = requests.get(url, params = payload)
+    result = str(r.json()["responseData"]["results"][0]["visibleUrl"])
+    if sys.flags.debug:
+        #print(json.dumps(r.json(), indent = 4))
+        #print("google " + r.json()["responseData"]["results"][0]["visibleUrl"])
+        print("google_query: " + term + " " + result)
+    return result 
+
 def petfinder_query(identifier, attribute):
     """
     Make a query to the petfinder API.
@@ -370,11 +370,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     auth_dict       = read_json(args.auth)
-    consumer_key    = auth_dict["yelp"]["consumer_key"]
-    consumer_secret = auth_dict["yelp"]["consumer_secret"]
-    token           = auth_dict["yelp"]["token"]
-    token_secret    = auth_dict["yelp"]["token_secret"]
-    
     settings_dict   = read_json(args.settings)
 
     if not args.skipcity:
@@ -383,13 +378,3 @@ if __name__ == "__main__":
         create_shelters_file(settings_dict["city_dict"], settings_dict["shelter_file"], settings_dict["shelter_count"], auth_dict)
     if not args.skippet:
         create_pets_file(settings_dict["pet_count"])
-
-    #print(yelp_query("austin tx", "vetrinarian", "image_url"))
-    #print(google_query("Austin pets alive"))
-
-    #create_shelters_file(city_list, 10)
-    #create_pets_file(10)
-    
-    #create_city_file(city_list)
-    #print(petfinder_query(31256107, "description"))
-
