@@ -7,7 +7,7 @@ import sys
 import json
 from pprint import pprint
 
-def create_cities_file(city_dict, filename):
+def create_cities_file(city_dict, filename, auth_dict):
     """Queries various web APIs for city information and stores it in a file.
     """
 
@@ -24,15 +24,15 @@ def create_cities_file(city_dict, filename):
                         "city_name" : city_name,
                         "city_state" : "BOGUS",
                         "city_country" : "US",
-                        "city_vet_url" : yelp_query(city_name, "veterinarian", "url"),
-                        "city_groomer_url" : yelp_query(city_name, "pet+groomer", "url"),
-                        "city_park_url" : yelp_query(city_name, "dog+park", "url"),
-                        "city_pic" : yelp_query(city_name, "city", "image_url"),
-                        "city_park_pic" : yelp_query(city_name, "dog+park", "image_url"),
-                        "city_vet_pic" : yelp_query(city_name, "veterinarian", "image_url"),
-                        "city_groomer_pic" : yelp_query(city_name, "pet+groomer", "image_url"),
+                        "city_vet_url" : yelp_query(city_name, "veterinarian", "url", auth_dict),
+                        "city_groomer_url" : yelp_query(city_name, "pet+groomer", "url", auth_dict),
+                        "city_park_url" : yelp_query(city_name, "dog+park", "url", auth_dict),
+                        "city_pic" : yelp_query(city_name, "city", "image_url", auth_dict),
+                        "city_park_pic" : yelp_query(city_name, "dog+park", "image_url", auth_dict),
+                        "city_vet_pic" : yelp_query(city_name, "veterinarian", "image_url", auth_dict),
+                        "city_groomer_pic" : yelp_query(city_name, "pet+groomer", "image_url", auth_dict),
                         "city_url" : city_name_urlized,
-                        "city_blurb" : yelp_query(city_name, "city", "snippet_text")
+                        "city_blurb" : yelp_query(city_name, "city", "snippet_text", auth_dict)
                      }
         fields = {}
         for query in query_dict:
@@ -52,14 +52,14 @@ def create_cities_file(city_dict, filename):
     if sys.flags.debug:
         print("City file created.")
     
-def yelp_query(city, term, field_name):
+def yelp_query(city, term, field_name, auth_dict):
 
     # setup for yelp requests
     yelp_params = {}
-    consumer_key = "KUvBeJ9O5nV23Bg5lBGLUA"
-    consumer_secret = "K-xQZ9Y8moKw1C71Qsn61MaM0t0"
-    token = "VchJDQRV1LyH_ZHoawrotybgyuuVN-IW"
-    token_secret = "eWqGCYQrFV9QcE2Ok6LuTvx6p7g"
+    consumer_key    = auth_dict["yelp"]["consumer_key"]
+    consumer_secret = auth_dict["yelp"]["consumer_secret"]
+    token           = auth_dict["yelp"]["token"]
+    token_secret    = auth_dict["yelp"]["token_secret"]
 
     session = rauth.OAuth1Session(consumer_key = consumer_key, consumer_secret = consumer_secret, access_token = token, access_token_secret = token_secret)
 
@@ -85,7 +85,7 @@ def google_query(term):
     #print("google " + term + " " + result)
     return result 
 
-def create_shelters_file(city_dict, filename, shelter_count):
+def create_shelters_file(city_dict, filename, shelter_count, auth_dict):
     """
     given a city, find <25 shelters associated with it and only include them if their city field matches
     return the list of shelter objects
@@ -165,7 +165,7 @@ def create_shelters_file(city_dict, filename, shelter_count):
                 except:
                     print("\nshelter_longitude\n")
                 try:
-                    shelter_fields["shelter_pic"] = yelp_query(city, sh["name"]["$t"], "image_url")
+                    shelter_fields["shelter_pic"] = yelp_query(city, sh["name"]["$t"], "image_url", auth_dict)
                 except:
                     print("\nshelter_pic\n")
                 try:
@@ -177,7 +177,7 @@ def create_shelters_file(city_dict, filename, shelter_count):
                 except:
                     print("\nshelter_url\n")
                 try:
-                    shelter_fields["shelter_blurb"] = yelp_query(city, sh["name"]["$t"], "snippet_text")
+                    shelter_fields["shelter_blurb"] = yelp_query(city, sh["name"]["$t"], "snippet_text", auth_dict)
                 except:
                     print("\nshelter_blurb\n")
               
@@ -195,8 +195,6 @@ def create_shelters_file(city_dict, filename, shelter_count):
     shelter_file.close()
     if sys.flags.debug:
         print("Shelter file created.")
-
-
 
 def create_pets_file(pet_count):
     """
@@ -370,9 +368,9 @@ if __name__ == "__main__":
     settings_dict   = read_json(args.settings)
 
     if not args.skipcity:
-        create_cities_file(settings_dict["city_dict"], settings_dict["city_file"])
+        create_cities_file(settings_dict["city_dict"], settings_dict["city_file"], auth_dict)
     if not args.skipshelter:
-        create_shelters_file(settings_dict["city_dict"], settings_dict["shelter_file"], settings_dict["shelter_count"])
+        create_shelters_file(settings_dict["city_dict"], settings_dict["shelter_file"], settings_dict["shelter_count"], auth_dict)
     if not args.skippet:
         create_pets_file(settings_dict["pet_count"])
 
