@@ -39,8 +39,10 @@ def create_cities_file(city_dict, filename, auth_dict):
             try:
                 fields[query] = query_dict[query]
             except:
-                # as of this implementation, we don't mind having empty values
+                # For now, it's fine to have empty strings for yelp queries that fail or come up empty. The database
+                # doesn't need to have meaningful values for -every- column in a row.
                 print("Nonfatal error attempting to populate fields[{}] with '{}'...".format(query, query_dict[query]))
+                fields[query] = ""
         fixture_element = {"model" : "nsaid.City", "pk" : pk, "fields" : fields}
         fixture_list.append(fixture_element)
         pk += 1
