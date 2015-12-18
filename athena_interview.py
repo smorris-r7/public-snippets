@@ -21,7 +21,7 @@ def validate_input(unvalidated):
         for element in unvalidated:
             assert element in string.ascii_uppercase
     except:
-        # don't bother to handle bad input and  continue executing, just raise the exception
+        # don't bother to handle bad input and continue executing, just raise the exception
         raise
 
 def rank(letters):
@@ -66,6 +66,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("word", nargs='?', help="a 25 letter or less word to evaluate")
     args = parser.parse_args()
+    assert args.word is not None, \
+        "a positional argument is required, see --help"
     word = list(args.word)
 
     validate_input(word)
