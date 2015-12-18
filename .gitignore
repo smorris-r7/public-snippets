@@ -1,0 +1,5 @@
+__pycache__
+*.pyc
+*.py.swp
+auth.json
+cities.json

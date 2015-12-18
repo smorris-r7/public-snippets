@@ -37,7 +37,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--word", help="a 25 letter or less word to evaluate", required=True)
+    parser.add_argument("word", nargs='?', help="a 25 letter or less word to evaluate")
     args = parser.parse_args()
     word = list(args.word)
 
