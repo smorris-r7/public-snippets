@@ -8,6 +8,21 @@ import argparse
 import logging
 import math
 import collections
+import string
+
+def validate_input(unvalidated):
+    """
+    Verify input is a nonempty list of characters A..Z of length less than or equal to 25.
+    Duplicate elements are permissable.
+    """
+    try:
+        length = len(unvalidated)
+        assert 1 <= length <= 25
+        for element in unvalidated:
+            assert element in string.ascii_uppercase
+    except:
+        # don't bother to handle bad input and  continue executing, just raise the exception
+        raise
 
 def rank(letters):
     """
@@ -52,6 +67,8 @@ if __name__ == "__main__":
     parser.add_argument("word", nargs='?', help="a 25 letter or less word to evaluate")
     args = parser.parse_args()
     word = list(args.word)
+
+    validate_input(word)
 
     r = rank(word)
     print(r)
