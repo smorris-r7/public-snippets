@@ -4,6 +4,7 @@ import argparse
 import logging
 import sys
 import math
+import collections
 
 def rank(letters):
     """
@@ -22,9 +23,14 @@ def rank(letters):
         
         next_branches = math.factorial(len(remaining)-1)
         logging.debug("next_branches:      {0}".format(next_branches))
+        dupe_factor = 1
+        dupe_dict = collections.Counter(remaining)
+        for key in dupe_dict:
+            dupe_factor *= math.factorial(dupe_dict[key])
+        logging.debug("dupe_factor:        {0}".format(dupe_factor))
         index_in_remaining = remaining.index(letter)
         logging.debug("index_in_remaining: {0}".format(index_in_remaining))
-        branches_to_left = index_in_remaining * next_branches
+        branches_to_left = next_branches / dupe_factor * index_in_remaining 
         logging.debug("branches_to_left:   {0}".format(branches_to_left))
         total_branches_to_left += branches_to_left
 
