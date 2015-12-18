@@ -5,7 +5,7 @@ import logging
 import sys
 import math
 
-def evaluate(letters):
+def rank(letters):
     """
     Rank a word alphabetically against all possible permutations of its letters. The earliest perm gets a rank of 1.
     The latest perm gets a rank of factorial(len(word)). If the word contains duplicate letters, return the lowest
@@ -30,8 +30,8 @@ def evaluate(letters):
 
         remaining.remove(letter)
     logging.debug("total_branches_to_left: {0}".format(total_branches_to_left))
-    rank = total_branches_to_left + 1
-    return rank 
+    final_rank = total_branches_to_left + 1
+    return final_rank 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
@@ -41,5 +41,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     word = list(args.word)
 
-    rank = evaluate(word)
-    print(rank)
+    r = rank(word)
+    print(r)
