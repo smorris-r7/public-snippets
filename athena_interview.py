@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""athena_interview.py: An implementation of 'athena - Coding Challenge.revised.pdf'."""
+
+__author__ = "Sam Morris"
+
 import argparse
 import logging
 import math
@@ -7,8 +11,9 @@ import collections
 
 def rank(letters):
     """
-    Rank a word alphabetically against all possible permutations of its letters. The earliest perm gets a rank of 1,
-    and the last perm gets a rank of factorial(len(letters))/product(factorials of the counts of all duplicate letters).
+    Rank a word (given as a list of letters) alphabetically against all possible permutations
+    of its letters. The earliest perm gets a rank of 1, and the last perm gets a rank of
+    factorial(len(letters))/product(factorials of the counts of all duplicate letters).
     Execution time must beat 500 ms and memory used must stay under 1 GB.
     """
     logging.debug("letters: {0}".format(letters))
