@@ -15,11 +15,23 @@ def evaluate(letters):
     remaining = list(letters)
     remaining.sort()
     logging.debug("remaining: {0}".format(remaining))
+    total_branches_to_left = 0
     for letter in letters:
-        logging.debug("letter: {0}".format(letter))
-        #logging.debug("next_branches (len(remaining)-1)!: {0}".format(math.factorial(len(remaining)-1)))
-        #logging.debug("index_in_remaining: {0}".format(remaining.index(letter)))
-    return 0
+        logging.debug("* * * * * * * * * * * * *")
+        logging.debug("processing letter {0}...".format(letter))
+        
+        next_branches = math.factorial(len(remaining)-1)
+        logging.debug("next_branches:      {0}".format(next_branches))
+        index_in_remaining = remaining.index(letter)
+        logging.debug("index_in_remaining: {0}".format(index_in_remaining))
+        branches_to_left = index_in_remaining * next_branches
+        logging.debug("branches_to_left:   {0}".format(branches_to_left))
+        total_branches_to_left += branches_to_left
+
+        remaining.remove(letter)
+    logging.debug("total_branches_to_left: {0}".format(total_branches_to_left))
+    rank = total_branches_to_left + 1
+    return rank 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
@@ -29,4 +41,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     word = list(args.word)
 
-    evaluate(word)
+    rank = evaluate(word)
+    print(rank)
