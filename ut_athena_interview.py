@@ -17,6 +17,9 @@ class RankTests(unittest.TestCase):
     def test_6(self):
         self.assertEqual(rank("ABCDEFGHIJKLMNOPQRSTUVWXY"), 1)
     def test_7(self):
+        # Per the documentation (athena - Coding Challenge.revised.pdf), we shouldn't see i
+        # input generating output this large. If execution time and memory footprint meet
+        # the spec on this, it's a good indicator any other input will pass as well.
         self.assertEqual(rank("YXWVUTSRQPONMLKJIHGFEDCBA"), 1.5511210043330984e+25)
     def test_8(self):
         self.assertEqual(rank("BAAAAAAAAAAAAAAAAAAAAAAAA"), 25)
