@@ -14,6 +14,12 @@ class RankTests(unittest.TestCase):
         self.assertEqual(rank("QUESTION"), 24572)
     def test_5(self):
         self.assertEqual(rank("BOOKKEEPER"), 10743)
+    def test_6(self):
+        self.assertEqual(rank("ABCDEFGHIJKLMNOPQRSTUVWXY"), 1)
+    def test_7(self):
+        self.assertEqual(rank("YXWVUTSRQPONMLKJIHGFEDCBA"), 1.5511210043330984e+25)
+    def test_8(self):
+        self.assertEqual(rank("BAAAAAAAAAAAAAAAAAAAAAAAA"), 25)
 
 if __name__ == "__main__":
     unittest.main()

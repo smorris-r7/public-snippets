@@ -2,7 +2,6 @@
 
 import argparse
 import logging
-import sys
 import math
 import collections
 
@@ -16,31 +15,31 @@ def rank(letters):
     remaining = list(letters)
     remaining.sort()
     logging.debug("remaining: {0}".format(remaining))
-    total_branches_to_left = 0
+    total_earlier_permutations = 0
     for letter in letters:
         logging.debug("* * * * * * * * * * * * *")
         logging.debug("processing letter {0}...".format(letter))
         
-        next_branches = math.factorial(len(remaining)-1)
-        logging.debug("next_branches:      {0}".format(next_branches))
+        index_in_remaining = remaining.index(letter)
+        logging.debug("index_in_remaining: {0}".format(index_in_remaining))
+        earlier_permutations = math.factorial(len(remaining)-1) * index_in_remaining
+        logging.debug("earlier_permutations:      {0}".format(earlier_permutations))
         dupe_factor = 1
         dupe_dict = collections.Counter(remaining)
         for key in dupe_dict:
             dupe_factor *= math.factorial(dupe_dict[key])
         logging.debug("dupe_factor:        {0}".format(dupe_factor))
-        index_in_remaining = remaining.index(letter)
-        logging.debug("index_in_remaining: {0}".format(index_in_remaining))
-        branches_to_left = next_branches / dupe_factor * index_in_remaining 
-        logging.debug("branches_to_left:   {0}".format(branches_to_left))
-        total_branches_to_left += branches_to_left
+        dupe_free_earlier_permutations = earlier_permutations / dupe_factor
+        logging.debug("dupe_free_earlier_permutations:   {0}".format(dupe_free_earlier_permutations))
+        total_earlier_permutations += dupe_free_earlier_permutations
 
         remaining.remove(letter)
-    logging.debug("total_branches_to_left: {0}".format(total_branches_to_left))
-    final_rank = total_branches_to_left + 1
+    logging.debug("total_earlier_permutations: {0}".format(total_earlier_permutations))
+    final_rank = total_earlier_permutations + 1
     return final_rank 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("word", nargs='?', help="a 25 letter or less word to evaluate")
