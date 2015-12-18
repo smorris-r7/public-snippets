@@ -15,6 +15,7 @@ def rank(letters):
     remaining = list(letters)
     remaining.sort()
     logging.debug("remaining: {0}".format(remaining))
+
     total_earlier_permutations = 0
     for letter in letters:
         logging.debug("processing letter {0}...".format(letter))
@@ -34,6 +35,7 @@ def rank(letters):
 
         remaining.remove(letter)
     logging.debug("total_earlier_permutations: {0}".format(total_earlier_permutations))
+
     final_rank = total_earlier_permutations + 1
     return final_rank 
 
