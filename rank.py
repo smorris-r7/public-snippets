@@ -12,6 +12,8 @@ def evaluate(letters):
     possible rank. Execution time must beat 500 ms and memory used must stay under 1 GB.
     """
     logging.debug("letters: {0}".format(letters))
+    remaining = list(letters)
+    remaining.sort()
     logging.debug("remaining: {0}".format(remaining))
     for letter in letters:
         logging.debug("letter: {0}".format(letter))
@@ -25,6 +27,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--word", help="a 25 letter or less word to evaluate", required=True)
     args = parser.parse_args()
-    word = args.word
+    word = list(args.word)
 
     evaluate(word)
