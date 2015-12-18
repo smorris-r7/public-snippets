@@ -36,12 +36,13 @@ def rank(letters):
         logging.debug("dupe_factor: {0}".format(dupe_factor))
         dupe_free_earlier_permutations = earlier_permutations / dupe_factor
         logging.debug("dupe_free_earlier_permutations: {0}".format(dupe_free_earlier_permutations))
+        assert dupe_free_earlier_permutations % 1 == 0, "dupe_free_earlier_permutations is not a whole number"
         total_earlier_permutations += dupe_free_earlier_permutations
 
         remaining.remove(letter)
     logging.debug("total_earlier_permutations: {0}".format(total_earlier_permutations))
 
-    final_rank = total_earlier_permutations + 1
+    final_rank = int(total_earlier_permutations + 1)
     return final_rank 
 
 if __name__ == "__main__":
