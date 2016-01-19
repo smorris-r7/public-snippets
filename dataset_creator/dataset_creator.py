@@ -137,7 +137,8 @@ class DatasetCreator:
                     except:
                         logging.info("\nshelter_pic\n")
                     try:
-                        shelter_fields["shelter_external_url"] = google_query(sh["name"]["$t"])
+                        q = google_query(sh["name"]["$t"])
+                        shelter_fields["shelter_external_url"] = q.runquery()
                     except:
                         logging.info("\nshelter_url\n")
                     try:
@@ -321,18 +322,20 @@ class DatasetCreator:
         #session.close()
         return result
 
-    def google_query(term):
-        """
-        Make a query to the google web search ajax API.
-        """
-        url = 'http://ajax.googleapis.com/ajax/services/search/web'
-        payload = {"v" : 1.0, "q" : term}
-        r = requests.get(url, params = payload)
-        result = str(r.json()["responseData"]["results"][0]["visibleUrl"])
-        #logging.debug(json.dumps(r.json(), indent = 4))
-        #logging.debug("google " + r.json()["responseData"]["results"][0]["visibleUrl"])
-        logging.debug("google_query: " + term + " " + result)
-        return result 
+    class google_query:
+        def __init__(self, term):
+            url = 'http://ajax.googleapis.com/ajax/services/search/web'
+            payload = {"v" : 1.0, "q" : term}
+        def runquery(self):
+            """
+            Make a query to the google web search ajax API.
+            """
+            r = requests.get(self.url, params = self.payload)
+            result = str(r.json()["responseData"]["results"][0]["visibleUrl"])
+            #logging.debug(json.dumps(r.json(), indent = 4))
+            #logging.debug("google " + r.json()["responseData"]["results"][0]["visibleUrl"])
+            logging.debug("google_query: " + term + " " + result)
+            return result 
 
     def petfinder_query(identifier, attribute):
         """
