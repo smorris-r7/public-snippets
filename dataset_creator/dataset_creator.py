@@ -329,10 +329,9 @@ class DatasetCreator:
         payload = {"v" : 1.0, "q" : term}
         r = requests.get(url, params = payload)
         result = str(r.json()["responseData"]["results"][0]["visibleUrl"])
-        if sys.flags.debug:
-            #print(json.dumps(r.json(), indent = 4))
-            #print("google " + r.json()["responseData"]["results"][0]["visibleUrl"])
-            logging.debug("google_query: " + term + " " + result)
+        #logging.debug(json.dumps(r.json(), indent = 4))
+        #logging.debug("google " + r.json()["responseData"]["results"][0]["visibleUrl"])
+        logging.debug("google_query: " + term + " " + result)
         return result 
 
     def petfinder_query(identifier, attribute):
@@ -375,16 +374,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    #auth_dict       = read_json(args.auth)
-    #settings_dict   = read_json(args.settings)
     dc = DatasetCreator(args.settings, args.auth)
 
     if not args.skipcity:
-        #create_cities_file(settings_dict["city_dict"], settings_dict["city_file"], auth_dict)
         dc.create_cities_file()
     if not args.skipshelter:
-        #create_shelters_file(settings_dict["city_dict"], settings_dict["shelter_file"], settings_dict["shelter_count"], auth_dict)
         dc.create_shelters_file()
     if not args.skippet:
-        #create_pets_file(settings_dict["pet_count"])
         dc.create_pets_file()
