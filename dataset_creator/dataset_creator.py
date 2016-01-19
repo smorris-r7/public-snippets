@@ -6,6 +6,7 @@ import requests
 import sys
 import json
 from pprint import pprint
+import logging
 
 class DatasetCreator:
 
@@ -25,13 +26,11 @@ class DatasetCreator:
         """
         fixture_list = []
         pk = 1
-        if sys.flags.debug:
-            print("Creating city file '{}'...".format(self.city_filename))
+        logging.debug("Creating city file '{}'...".format(self.city_filename))
 
         for city_name_urlized in self.city_dict:
             city_name = self.city_dict[city_name_urlized]
-            if sys.flags.debug:
-                print(" Processing '{}'...".format(city_name_urlized))
+            logging.debug(" Processing '{}'...".format(city_name_urlized))
             query_dict = {  "city_urlized" : city_name_urlized,
                             "city_name" : city_name,
                             "city_state" : "BOGUS",
@@ -53,7 +52,7 @@ class DatasetCreator:
                 except:
                     # For now, it's fine to have empty strings for yelp queries that fail or come up empty. The database
                     # doesn't need to have meaningful values for -every- column in a row.
-                    print("Nonfatal error attempting to populate fields[{}] with '{}'...".format(query, query_dict[query]))
+                    logging.info("Nonfatal error attempting to populate fields[{}] with '{}'...".format(query, query_dict[query]))
                     fields[query] = ""
             fixture_element = {"model" : "nsaid.City", "pk" : pk, "fields" : fields}
             fixture_list.append(fixture_element)
@@ -62,8 +61,7 @@ class DatasetCreator:
         city_file = open(self.city_filename, "w")
         json.dump(fixture_list, city_file, indent = 4)
         city_file.close()
-        if sys.flags.debug:
-            print("City file created.")
+        logging.info("City file created.")
         
     def create_shelters_file(self):
         """
@@ -72,12 +70,10 @@ class DatasetCreator:
         fixture_superlist = []
         pk = 1
 
-        if sys.flags.debug:
-            print("Creating shelters file '{}'...".format(self.shelter_filename))
+        logging.debug("Creating shelters file '{}'...".format(self.shelter_filename))
         for city_urlized in self.city_dict:
             city = self.city_dict[city_urlized]
-            if sys.flags.debug:
-                print("Processing '{}'...".format(city_urlized))
+            logging.info("Processing '{}'...".format(city_urlized))
             petfinder_url = "http://api.petfinder.com/shelter.find"
             payload = {"key" : "2933122e170793b4d4b60358e67ecb65", "location" : city, "count" : self.shelter_count, "format" : "json"}
             r = requests.get(petfinder_url, params=payload)
@@ -86,7 +82,7 @@ class DatasetCreator:
             for sh in r.json()["petfinder"]["shelters"]["shelter"]:
                 #print(str(sh))
                 try:
-                    print("       attempting to create shelter " + sh["id"]["$t"] + " " + sh["name"]["$t"])
+                    logging.info("       attempting to create shelter " + sh["id"]["$t"] + " " + sh["name"]["$t"])
                     shelter_fields = {"shelter_id" : "", "shelter_name" : "", "shelter_city_urlized" : "", "shelter_hours" : "", 
                                       "shelter_address" : "", "shelter_phone" : "", "shelter_email" : "", "shelter_city" : "",
                                       "shelter_state" : "", "shelter_lattitude" : "", "shelter_longitude" : "",
@@ -95,68 +91,67 @@ class DatasetCreator:
                     try:
                         shelter_fields["shelter_id"] = sh["id"]["$t"]
                     except:
-                        print("\nshelter_id\n")
+                        logging.error("\nshelter_id\n")
                     try:
                         shelter_fields["shelter_name"] = sh["name"]["$t"]
                     except:
-                        print("\nshelter_name\n")
+                        logging.error("\nshelter_name\n")
                     try:
                         shelter_fields["shelter_city_urlized"] = city_urlized
                     except:
-                       print("\nshelter_city_urlized\n")
+                       logging.error("\nshelter_city_urlized\n")
                     try:
                         shelter_fields["shelter_hours"] = ""
                     except:
-                        print("\nshelter_hours\n")
+                        logging.error("\nshelter_hours\n")
                     try:
                         shelter_fields["shelter_address"] = sh["address1"]["$t"]
                     except:
-                        print("\nshelter_address\n")
+                        logging.info("\nshelter_address\n")
                     try:
                         shelter_fields["shelter_phone"] = sh["phone"]["$t"]
                     except:
-                        print("\nshelter_phone\n")
+                        logging.error("\nshelter_phone\n")
                     try:
                         shelter_fields["shelter_email"] = sh["email"]["$t"]
                     except:
-                        print("\nshelter_email\n")
+                        logging.info("\nshelter_email\n")
                     try:
                         shelter_fields["shelter_city"] = sh["city"]["$t"]
                     except:
-                        print("\nshelter_city\n")
+                        logging.info("\nshelter_city\n")
                     try:
                         shelter_fields["shelter_state"] = sh["state"]["$t"]
                     except:
-                        print("\nshelter_state\n")
+                        logging.info("\nshelter_state\n")
                     try:
                         shelter_fields["shelter_lattitude"] = sh["latitude"]["$t"]
                     except:
-                        print("\nshelter_lattitude\n")
+                        logging.info("\nshelter_lattitude\n")
                     try:
                         shelter_fields["shelter_longitude"] = sh["longitude"]["$t"]
                     except:
-                        print("\nshelter_longitude\n")
+                        logging.info("\nshelter_longitude\n")
                     try:
                         shelter_fields["shelter_pic"] = self.yelp_query(city, sh["name"]["$t"], "image_url", self.__auth_dict)
                     except:
-                        print("\nshelter_pic\n")
+                        logging.info("\nshelter_pic\n")
                     try:
                         shelter_fields["shelter_external_url"] = google_query(sh["name"]["$t"])
                     except:
-                        print("\nshelter_url\n")
+                        logging.info("\nshelter_url\n")
                     try:
                         shelter_fields["shelter_url"] = sh["id"]["$t"]
                     except:
-                        print("\nshelter_url\n")
+                        logging.info("\nshelter_url\n")
                     try:
                         shelter_fields["shelter_blurb"] = self.yelp_query(city, sh["name"]["$t"], "snippet_text", self.__auth_dict)
                     except:
-                        print("\nshelter_blurb\n")
-                  
+                        logging.info("\nshelter_blurb\n")
+                 
                 except Exception as e:
-                    # do nothing on KeyError, but don't append an object missing essential attributes to the list
                     #pass
-                    print("\ncreating shelter " + sh["name"]["$t"] + "\n" + str(e) + "\n" + str(json.dumps(sh, indent = 4)))
+                    logging.info("\ncreating shelter " + sh["name"]["$t"] + "\n" + str(e) + "\n" + str(json.dumps(sh, indent = 4)))
                 else:
                     fixture_element = {"model" : "nsaid.Shelter", "pk" : pk, "fields" : shelter_fields}
                     fixture_list.append(fixture_element)
@@ -165,8 +160,7 @@ class DatasetCreator:
         shelter_file = open("../../nsaid/fixtures/shelters_fixture_2.json", "w")
         json.dump(fixture_superlist, shelter_file, indent = 4)
         shelter_file.close()
-        if sys.flags.debug:
-            print("Shelter file created.")
+        logging.info("Shelter file created.")
 
     def create_pets_file(self):
         """
@@ -178,7 +172,7 @@ class DatasetCreator:
         fixture_superlist = []
         pk = 1
 
-        print("count is " + str(self.pet_count))
+        logging.debug("count is " + str(self.pet_count))
         shelters_file = json.loads(open("../../nsaid/fixtures/shelters_fixture_2.json").read())
         master_pets = []
         for shelter in shelters_file:
@@ -186,18 +180,18 @@ class DatasetCreator:
             #print(shelter["fields"]["shelter_id"] + " " + shelter["fields"]["shelter_city"])
             petfinder_url = "http://api.petfinder.com/shelter.getPets"
             payload = {"key" : "2933122e170793b4d4b60358e67ecb65", "id" : shelter["fields"]["shelter_id"], "count" : self.pet_count, "format" : "json"}
-            print("\ncreating pets for shelter " + shelter["fields"]["shelter_id"])
+            logging.info("\ncreating pets for shelter " + shelter["fields"]["shelter_id"])
             r = requests.get(petfinder_url, params = payload)
             fixture_list = []
             #print("*** " + json.dumps(r.json()["petfinder"]["pets"], indent = 4))
             try:
                 pet_list = r.json()["petfinder"]["pets"]["pet"]
                 #print("pet_list " + json.dumps(pet_list, indent = 4))
-                print("type of pet list is " + str(type(pet_list)) + " and len of pet_list is " + str(len(pet_list)))
+                logging.debug("type of pet list is " + str(type(pet_list)) + " and len of pet_list is " + str(len(pet_list)))
                 assert type(pet_list) == list
                 assert len(pet_list) > 1
                 for p in pet_list:
-                    print("\n   about to create a pet: " + p["name"]["$t"] + " from shelter " + p["shelterId"]["$t"] + " " + shelter["fields"]["shelter_name"])
+                    logging.debug("\n   about to create a pet: " + p["name"]["$t"] + " from shelter " + p["shelterId"]["$t"] + " " + shelter["fields"]["shelter_name"])
                     try:
                         thumb = ""
                         big = ""
@@ -216,78 +210,78 @@ class DatasetCreator:
                         try:
                             pet_fields["pet_id"] = p["id"]["$t"]
                         except:
-                            print("pet_id")
+                            logging.error("pet_id")
                         try:
                             pet_fields["pet_name"] = p["name"]["$t"]
                         except:
-                            print("pet_name")
+                            logging.debug("pet_name")
                         try:
                             pet_fields["pet_age"] = p["age"]["$t"]
                         except:
-                            print("pet_age")
+                            logging.debug("pet_age")
                         try:
                             pet_fields["pet_sex"] = p["sex"]["$t"]
                         except:
-                            print("pet_sex")
+                            logging.debug("pet_sex")
                         try:
                             pet_fields["pet_size"] = p["size"]["$t"]
                         except:
-                            print("pet_size")
+                            logging.debug("pet_size")
                         try:
                             pet_fields["pet_breed"] = p["breeds"]["breed"]["$t"]
                         except:
-                            print("pet_breed")
+                            logging.debug("pet_breed")
                         try:
                             pet_fields["pet_shelter"] = p["shelterId"]["$t"]
                         except:
-                            print("pet_shelter")
+                            logging.debug("pet_shelter")
                         try:
                             pet_fields["pet_city"] = shelter["fields"]["shelter_city"]
                         except:
-                            print("pet_city")
+                            logging.debug("pet_city")
                         try:
                             pet_fields["pet_city_urlized"] = shelter["fields"]["shelter_city_urlized"]
                         except:
-                            print("pet_city_urlized")
+                            logging.debug("pet_city_urlized")
                         try:
                             pet_fields["pet_state"] = shelter["fields"]["shelter_state"]
                         except:
-                            print("pet_state")
+                            logging.debug("pet_state")
                         try:
                             pet_fields["pet_pic_url"] = thumb
                         except:
-                            print("pet_pic_url")
+                            logging.debug("pet_pic_url")
                         try:
                             pet_fields["pet_pic_large"] = big
                         except:
-                            print("pet_pic_large")
+                            logging.debug("pet_pic_large")
                         try:
                             pet_fields["pet_pic_list"] = pet_pic_list
                         except:
-                            print("pet_pic_list")
+                            logging.debug("pet_pic_list")
                         try:
                             pet_fields["pet_url"] = "id" + p["id"]["$t"]
                         except:
-                            print("pet_url")
+                            logging.debug("pet_url")
                         try:
                             pet_fields["pet_shelter_url"] = p["shelterId"]["$t"]
                         except:
-                            print("pet_shelter_url")
+                            logging.debug("pet_shelter_url")
                         try:
                             pet_fields["pet_city_url"] = shelter["fields"]["shelter_city_urlized"]
                         except:
-                            print("pet_city_url")
+                            logging.debug("pet_city_url")
                         try:
                             pet_fields["pet_shelter_name"] = shelter["fields"]["shelter_name"]
                         except:
-                            print("pet_shelter_name")
+                            logging.debug("pet_shelter_name")
                         try:
                             pet_fields["pet_bio"] = petfinder_query(p["id"]["$t"], "description")
                         except:
-                            print("pet_bio")
+                            logging.debug("pet_bio")
                     except Exception as e:
                         #pass
-                        print("   problem creating pet " + p["id"]["$t"] + " no photos")
+                        logging.debug("   problem creating pet " + p["id"]["$t"] + " no photos")
                     else:
                         fixture_element = {"model" : "nsaid.Pet", "pk" : pk, "fields" : pet_fields}
                         fixture_list.append(fixture_element)
@@ -295,7 +289,7 @@ class DatasetCreator:
                     #break
             except Exception as e:
                 #pass
-                print("*** Exception creating pets from shelter " + shelter["fields"]["shelter_id"]  + " " + shelter["fields"]["shelter_name"]);
+                logging.debug("*** Exception creating pets from shelter " + shelter["fields"]["shelter_id"]  + " " + shelter["fields"]["shelter_name"]);
                 #print(json.dumps(r.json()["petfinder"]["pets"]["pet"], indent = 4))
             fixture_superlist += fixture_list
             #break
@@ -323,7 +317,7 @@ class DatasetCreator:
         result = str(d["businesses"][0][field_name])
         if sys.flags.debug:
             #print(json.dumps(d, indent = 4))
-            print("yelp_query: " + field_name + " " + result)
+            logging.debug("yelp_query: " + field_name + " " + result)
         #session.close()
         return result
 
@@ -338,7 +332,7 @@ class DatasetCreator:
         if sys.flags.debug:
             #print(json.dumps(r.json(), indent = 4))
             #print("google " + r.json()["responseData"]["results"][0]["visibleUrl"])
-            print("google_query: " + term + " " + result)
+            logging.debug("google_query: " + term + " " + result)
         return result 
 
     def petfinder_query(identifier, attribute):
@@ -362,12 +356,15 @@ class DatasetCreator:
         """
         with open(filename) as f:
             data = json.loads(f.read())
-        if sys.flags.debug:
-            print("read from file {0}".format(filename))
-            pprint(data)
+        logging.info("read from file {0}".format(filename))
+        logging.debug(data)
         return data
         
 if __name__ == "__main__":
+
+    # DEBUG, INFO, WARNING, ERROR, CRITICAL
+    logging.basicConfig(level=logging.DEBUG)
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--auth", help="json config file, specifically containing developer keys", required=True)
     parser.add_argument("--settings", help="json settings file", required=True)
