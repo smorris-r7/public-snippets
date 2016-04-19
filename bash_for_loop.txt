@@ -1,1 +1,1 @@
-for HOST in {aus-dguibld01,aus-sguibld01,aus-sguibld02,aus-guibuild01,aus-tguibld01}; ssh hedev@$HOST "echo ; echo \"***** \$HOSTNAME *****\" ; cat /cygdrive/c/UIBAMConfiguration/userconfig.txt ; echo" 2> /dev/null ; done
+for HOST in {aus-dguibld01,aus-sguibld01,aus-sguibld02,aus-guibuild01,aus-tguibld01}; do ssh hedev@$HOST "echo ; echo \"***** \$HOSTNAME *****\" ; cat /cygdrive/c/UIBAMConfiguration/userconfig.txt ; echo" 2> /dev/null ; done
